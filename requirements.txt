@@ -1,3 +1,8 @@
 requests
 dotenv
-langchain-docling
+langgraph
+langchain-community 
+langchain-openai
+langchain-text-splitters 
+bs4
+google-generativeai
