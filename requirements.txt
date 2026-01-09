@@ -5,4 +5,4 @@ langchain-community
 langchain-openai
 langchain-text-splitters 
 bs4
-google-generativeai
+google-genai
