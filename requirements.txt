@@ -6,3 +6,4 @@ langchain-openai
 langchain-text-splitters 
 bs4
 google-genai
+chromadb
