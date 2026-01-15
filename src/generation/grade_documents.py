@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Literal
-from langchain.chat_models import init_chat_model
+from langgraph.graph import MessagesState
 
 GRADE_PROMPT = (
     "You are a grader assessing relevance of a retrieved document to a user question. \n "
@@ -16,13 +16,11 @@ class GradeDocuments(BaseModel):
         description="Relevance score: 'yes' if relevant, 'no' if not relevant"
     )
 
-grader_model = init_chat_model("anthropic:claude-sonnet-4-5", temperature=0)
-
-def grade_documents(MessageState) -> Literal["generate_answer", "rewrite_query"]:
+def grade_documents(state:MessagesState, grader_model) -> Literal["generate_answer", "rewrite_query"]:
     """Determine whether the retrieved documents are relevant to the question."""
     try:
-        question = MessageState["messages"][0].content
-        context = MessageState["messages"][-1].content
+        question = state["messages"][0].content
+        context = state["messages"][-1].content
         prompt = GRADE_PROMPT.format(question=question, context=context)
         response = (
             grader_model.with_structured_output(GradeDocuments).invoke({"role": "user", "content": prompt})
