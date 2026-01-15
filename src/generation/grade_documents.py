@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field
 from typing import Literal
 from langgraph.graph import MessagesState
 
+from ..config.models import grader_model
+
 GRADE_PROMPT = (
     "You are a grader assessing relevance of a retrieved document to a user question. \n "
     "Here is the retrieved document: \n\n {context} \n\n"
@@ -16,7 +18,7 @@ class GradeDocuments(BaseModel):
         description="Relevance score: 'yes' if relevant, 'no' if not relevant"
     )
 
-def grade_documents(state:MessagesState, grader_model) -> Literal["generate_answer", "rewrite_query"]:
+def grade_documents(state:MessagesState) -> Literal["generate_answer", "rewrite_query"]:
     """Determine whether the retrieved documents are relevant to the question."""
     try:
         question = state["messages"][0].content

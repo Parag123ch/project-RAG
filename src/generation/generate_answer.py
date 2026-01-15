@@ -1,5 +1,7 @@
 from langgraph.graph import MessagesState
 
+from ..config.models import answer_model
+
 GENERATE_ANSWER_PROMPT = (
     "You are an assistant for question-answering tasks. "
     "Use the following pieces of retrieved context to answer the question. "
@@ -9,7 +11,7 @@ GENERATE_ANSWER_PROMPT = (
     "Context: {context}"
 )
 
-def generate_answer(state: MessagesState, answer_model):
+def generate_answer(state: MessagesState):
     """Generate a final answer based on the retrieved documents and the user question."""
     try:
         question = state["messages"][0].content
