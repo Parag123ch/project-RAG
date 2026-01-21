@@ -1,20 +1,32 @@
-import chromadb
-from ..rag.embeddings import GeminiEmbeddingFunction
+from pymilvus import MilvusClient, DataType
+from dotenv import load_dotenv
+import os
 
-def create_chroma_db(documents, name):
-    try:
-        chroma_client = chromadb.Client()
-        db = chroma_client.create_collection(
-            name=name,
-            embedding_function=GeminiEmbeddingFunction()
-        )
-        for i, d in enumerate(documents):
-            db.add(
-                documents=d,
-                ids=str(i)
-            )
-        print(f"ChromaDB collection '{name}' created with {len(documents)} documents.")
-        return db
-    except Exception as e:
-        print(f"Error creating ChromaDB collection: {e}")
-        return None
+load_dotenv()
+
+client = MilvusClient(
+    uri=os.getenv("CLUSTER_ENDPOINT"),
+    token=os.getenv("MILVUS_TOKEN")
+)
+
+schema = MilvusClient.create_schema(
+    auto_id = True,
+    enable_dynamic_field = True,
+)
+
+schema.add_field(field_name="my_vector", datatype=DataType.FLOAT_VECTOR, dim=768)
+
+index_params = client.prepare_index_params()
+
+index_params.add_index(field_name="my_id")
+index_params.add_index(
+    field_name="my_vector",
+    index_type="IVF_FLAT",
+    metric_type="COSINE",
+)
+
+client.create_collection(
+    collection_name="my_collection",
+    schema=schema,
+    index_params=index_params
+)
