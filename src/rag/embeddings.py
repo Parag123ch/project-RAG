@@ -13,6 +13,8 @@ def embed_docs(docs):
     """Generate embeddings for a list of documents using Gemini Embedding Function."""
     try:
         doc_embeddings = gemini_ef.encode_documents(docs)
-        
+        print("Embeddings", doc_embeddings)
+        print("Dim", gemini_ef.dim, doc_embeddings[0].shape)
+        return doc_embeddings
     except Exception as e:
         print("Error embedding documents: {e}")
